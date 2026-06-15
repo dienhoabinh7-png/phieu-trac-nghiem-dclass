@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phiếu Trả Lời Trắc Nghiệm 2025</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <title>Phiếu Trắc Nghiệm D CLASS</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -16,49 +15,87 @@
         .container {
             width: 800px;
             background-color: white;
-            padding: 20px;
+            padding: 20px 40px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             color: #d32f2f;
+            position: relative;
+            overflow: hidden;
         }
-        h2 {
+        /* Dấu mộc chìm chống ăn cắp */
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 60px;
+            color: rgba(211, 47, 47, 0.08); /* Rất mờ để không cản trở bài làm */
+            white-space: nowrap;
+            pointer-events: none;
+            font-weight: 900;
+            z-index: 0;
+            text-align: center;
+            line-height: 1.2;
+        }
+        
+        .content-wrapper {
+            position: relative;
+            z-index: 1; /* Nổi lên trên watermark */
+        }
+
+        h2, h3 {
             text-align: center;
             margin-bottom: 5px;
             text-transform: uppercase;
+        }
+        h3 {
+            font-size: 14px;
+            margin-top: 0;
+            margin-bottom: 20px;
         }
         .header-info {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
             margin-bottom: 20px;
-            border: 1px solid #d32f2f;
-            padding: 10px;
+            border: 2px solid #d32f2f;
+            padding: 15px;
+            border-radius: 5px;
         }
         .info-group {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 15px;
+        }
+        .info-group label {
+            display: flex;
+            align-items: flex-end;
+            font-weight: bold;
         }
         .info-group input {
             border: none;
             border-bottom: 1px dotted #d32f2f;
             outline: none;
             color: black;
-            font-size: 14px;
+            font-size: 16px;
+            flex-grow: 1;
+            margin-left: 10px;
+            background: transparent;
         }
         .section-title {
             font-weight: bold;
-            margin-top: 15px;
-            margin-bottom: 10px;
+            margin-top: 20px;
+            margin-bottom: 15px;
             border-bottom: 2px solid #d32f2f;
             display: inline-block;
+            font-size: 18px;
         }
         
-        /* CSS cho các ô tô tròn (Bubbles) */
+        /* CSS cho các ô tô tròn */
         .bubble-group {
             display: flex;
             align-items: center;
             gap: 5px;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             color: black;
         }
         .bubble-group span.q-num {
@@ -70,22 +107,20 @@
         .bubble {
             cursor: pointer;
         }
-        .bubble input {
-            display: none; /* Ẩn checkbox mặc định */
-        }
+        .bubble input { display: none; }
         .bubble span.circle {
             display: inline-block;
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             border: 1px solid #d32f2f;
             border-radius: 50%;
             text-align: center;
-            line-height: 20px;
-            font-size: 12px;
+            line-height: 22px;
+            font-size: 13px;
             color: #d32f2f;
             background-color: white;
+            transition: all 0.2s;
         }
-        /* Khi checkbox được check, đổi màu nền */
         .bubble input:checked + span.circle {
             background-color: #d32f2f;
             color: white;
@@ -93,117 +128,112 @@
         }
 
         /* Bố cục Phần I */
-        .part1-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-        }
+        .part1-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
 
         /* Bố cục Phần II */
-        .part2-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-        }
-        .p2-box {
-            border: 1px solid #d32f2f;
-            padding: 5px;
-        }
-        .p2-box-title { text-align: center; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #d32f2f;}
-        .p2-header { display: flex; justify-content: flex-end; gap: 10px; font-size: 12px; margin-bottom: 5px; color: #d32f2f;}
-        .p2-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; color: black; font-size: 14px;}
+        .part2-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
+        .p2-box { border: 1px solid #d32f2f; padding: 8px; background: rgba(255,255,255,0.8); }
+        .p2-box-title { text-align: center; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #d32f2f; padding-bottom: 5px;}
+        .p2-header { display: flex; justify-content: flex-end; gap: 10px; font-size: 12px; margin-bottom: 8px; color: #d32f2f; font-weight: bold;}
+        .p2-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; color: black; font-size: 15px;}
         
-        /* Bố cục Phần III */
-        .part3-grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 10px;
+        /* Bố cục Phần III (Đã fix lỗi chèn số 6) */
+        .part3-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 15px; }
+        .p3-box { border: 1px solid #d32f2f; padding: 10px 5px; display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.8);}
+        .p3-inputs { display: flex; gap: 4px; margin-bottom: 8px;}
+        .p3-inputs input { 
+            width: 26px; /* Đã làm rộng ra */
+            height: 28px;
+            text-align: center; 
+            border: 1px solid #d32f2f; 
+            color: black;
+            font-size: 16px;
+            font-weight: bold;
+            box-sizing: border-box; /* Đảm bảo không bị tràn */
+            border-radius: 3px;
         }
-        .p3-box { border: 1px solid #d32f2f; padding: 5px; display: flex; flex-direction: column; align-items: center;}
-        .p3-inputs { display: flex; gap: 2px; margin-bottom: 5px;}
-        .p3-inputs input { width: 20px; text-align: center; border: 1px solid #d32f2f; color: black;}
 
         .btn-submit {
             display: block;
             width: 100%;
-            padding: 15px;
+            padding: 18px;
             background-color: #d32f2f;
             color: white;
             border: none;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 30px;
-            border-radius: 5px;
+            margin-top: 40px;
+            border-radius: 8px;
+            transition: background 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
         }
-        .btn-submit:hover {
-            background-color: #b71c1c;
-        }
-        
-        /* Ẩn nút submit khi in PDF */
-        .html2pdf__container .btn-submit { display: none; }
+        .btn-submit:hover { background-color: #b71c1c; }
     </style>
 </head>
 <body>
 
-<div class="container" id="exam-form">
-    <h2>PHIẾU TRẢ LỜI TRẮC NGHIỆM</h2>
+<div class="container">
+    <div class="watermark">HỆ THỐNG D CLASS<br>BẢN QUYỀN GIA SƯ DIHOBI</div>
     
-    <div class="header-info">
-        <div class="info-group">
-            <label>Kỳ thi: <input type="text" style="width: 80%;"></label>
-            <label>Bài thi: <input type="text" style="width: 80%;"></label>
-            <label>Ngày thi: <input type="text" style="width: 75%;" placeholder=".../.../20..."></label>
-            <label>Hội đồng thi: <input type="text" style="width: 70%;"></label>
-            <label>Họ và tên thí sinh: <input type="text" style="width: 60%;"></label>
+    <form action="https://formsubmit.co/toiyeuvatlythptqg26@gmail.com" method="POST" class="content-wrapper">
+        
+        <input type="hidden" name="_subject" value="[D CLASS] Có học sinh vừa nộp bài trắc nghiệm!">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table"> <h2>PHIẾU TRẢ LỜI TRẮC NGHIỆM</h2>
+        <h3>HỆ THỐNG ĐÁNH GIÁ NĂNG LỰC D CLASS</h3>
+        
+        <div class="header-info">
+            <div class="info-group">
+                <label>Họ và tên học sinh: <input type="text" name="Ho_Ten" required></label>
+                <label>Bài thi / Môn thi: <input type="text" name="Mon_Thi" required></label>
+            </div>
+            <div class="info-group">
+                <label>Số báo danh: <input type="text" name="SBD" required></label>
+                <label>Mã đề thi: <input type="text" name="Ma_De" required></label>
+            </div>
         </div>
-        <div class="info-group">
-            <label>Phòng thi số: <input type="text" style="width: 70%;"></label>
-            <label>Số báo danh: <input type="text" style="width: 70%;"></label>
-            <label>Mã đề thi: <input type="text" style="width: 75%;"></label>
-            <label>Ngày sinh: <input type="text" style="width: 75%;"></label>
-        </div>
-    </div>
 
-    <div class="section-title">PHẦN I</div>
-    <div class="part1-grid" id="part1-container"></div>
+        <div class="section-title">PHẦN I: Câu hỏi trắc nghiệm nhiều phương án lựa chọn</div>
+        <div class="part1-grid" id="part1-container"></div>
 
-    <div class="section-title">PHẦN II</div>
-    <div class="part2-grid" id="part2-container"></div>
+        <div class="section-title">PHẦN II: Câu hỏi trắc nghiệm đúng sai</div>
+        <div class="part2-grid" id="part2-container"></div>
 
-    <div class="section-title">PHẦN III</div>
-    <div class="part3-grid" id="part3-container"></div>
+        <div class="section-title">PHẦN III: Câu hỏi trắc nghiệm trả lời ngắn</div>
+        <div class="part3-grid" id="part3-container"></div>
 
-    <button class="btn-submit" onclick="submitAndGeneratePDF()">GỬI BÀI & TẢI FILE PDF</button>
+        <button type="submit" class="btn-submit">NỘP BÀI VÀO HỆ THỐNG D CLASS</button>
+    </form>
 </div>
 
 <script>
-    // 1. Render Phần I (40 câu) - Dùng checkbox để chọn không giới hạn
+    // 1. Render Phần I (40 câu)
     const p1Container = document.getElementById('part1-container');
     const options = ['A', 'B', 'C', 'D'];
     for (let i = 1; i <= 40; i++) {
         let html = `<div class="bubble-group"><span class="q-num">${i}</span>`;
         options.forEach(opt => {
-            // Thay type="radio" bằng type="checkbox"
-            html += `<label class="bubble"><input type="checkbox" name="p1_q${i}_${opt}" value="${opt}"><span class="circle">${opt}</span></label>`;
+            // Tên biến rõ ràng để khi nhận email dễ đọc: P1_Cau_1 = A
+            html += `<label class="bubble"><input type="checkbox" name="P1_Cau_${i}" value="${opt}"><span class="circle">${opt}</span></label>`;
         });
         html += `</div>`;
         p1Container.innerHTML += html;
     }
 
-    // 2. Render Phần II (8 câu Đúng/Sai) - Dùng checkbox để chọn không giới hạn
+    // 2. Render Phần II (8 câu Đúng/Sai)
     const p2Container = document.getElementById('part2-container');
     const subOpts = ['a', 'b', 'c', 'd'];
     for (let i = 1; i <= 8; i++) {
         let boxHtml = `<div class="p2-box">
             <div class="p2-box-title">Câu ${i}</div>
-            <div class="p2-header"><span>Đúng</span> <span>Sai</span></div>`;
+            <div class="p2-header"><span>Đ</span> <span>S</span></div>`;
         subOpts.forEach(sub => {
             boxHtml += `<div class="p2-row">
                 <span>${sub})</span>
                 <div>
-                    <label class="bubble"><input type="checkbox" name="p2_q${i}_${sub}_D" value="D"><span class="circle">Đ</span></label>
-                    <label class="bubble"><input type="checkbox" name="p2_q${i}_${sub}_S" value="S"><span class="circle">S</span></label>
+                    <label class="bubble"><input type="checkbox" name="P2_Cau_${i}_Y_${sub}" value="Đúng"><span class="circle">Đ</span></label>
+                    <label class="bubble"><input type="checkbox" name="P2_Cau_${i}_Y_${sub}" value="Sai"><span class="circle">S</span></label>
                 </div>
             </div>`;
         });
@@ -217,32 +247,15 @@
         let boxHtml = `<div class="p3-box">
             <div class="p2-box-title" style="width:100%; border:none;">Câu ${i}</div>
             <div class="p3-inputs">
-                <input type="text" maxlength="1" placeholder="-" title="Dấu âm (nếu có)">
-                <input type="text" maxlength="1">
-                <input type="text" maxlength="1">
-                <input type="text" maxlength="1">
-                <input type="text" maxlength="1">
+                <input type="text" maxlength="1" name="P3_Cau_${i}[]" placeholder="-" title="Dấu âm (nếu có)">
+                <input type="text" maxlength="1" name="P3_Cau_${i}[]">
+                <input type="text" maxlength="1" name="P3_Cau_${i}[]">
+                <input type="text" maxlength="1" name="P3_Cau_${i}[]">
+                <input type="text" maxlength="1" name="P3_Cau_${i}[]">
             </div>
-            <small style="font-size:10px; color:black;">Điền đáp án</small>
+            <small style="font-size:11px; color:black; font-weight:bold;">Điền đáp án</small>
         </div>`;
         p3Container.innerHTML += boxHtml;
-    }
-
-    // 4. Hàm xử lý xuất PDF
-    function submitAndGeneratePDF() {
-        const element = document.getElementById('exam-form');
-        const opt = {
-            margin:       0.2,
-            filename:     'Phieu_Trac_Nghiem_Bai_Lam.pdf',
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true },
-            jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-        };
-
-        alert("Hệ thống đang tạo file PDF. Vui lòng tải file này về và đính kèm gửi vào email: toiyeuvatlythptqg26@gmail.com");
-        
-        // Tạo file PDF
-        html2pdf().set(opt).from(element).save();
     }
 </script>
 
